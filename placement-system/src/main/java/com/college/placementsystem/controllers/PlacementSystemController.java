@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.college.placementsystem.model.User;
+import com.college.placementsystem.model.LoginResponse;
 
 @CrossOrigin()
 @RestController
@@ -13,7 +13,7 @@ import com.college.placementsystem.model.User;
 public class PlacementSystemController {
 	@GetMapping(produces = "application/json")
 	@RequestMapping({ "/validateLogin" })
-	public User validateLogin() {
-		return new User("User successfully authenticated");
+	public LoginResponse validateLogin() {
+		return new LoginResponse("User successfully authenticated");
 	}
 }

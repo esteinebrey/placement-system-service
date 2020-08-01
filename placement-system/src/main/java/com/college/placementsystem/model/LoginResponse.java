@@ -1,9 +1,9 @@
 package com.college.placementsystem.model;
 
-public class User {
+public class LoginResponse {
 	private String status;
 
-	public User(String status) {
+	public LoginResponse(String status) {
 		this.status = status;
 	}
 
