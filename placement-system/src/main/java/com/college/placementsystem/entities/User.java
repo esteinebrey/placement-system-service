@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private int id;
 	
 	@Column
 	private String username;
@@ -22,6 +22,10 @@ public class User {
 	@Column
 	@JsonIgnore
 	private String password;
+	
+	public int getId() {
+		return id;
+	}
 
 	public String getUsername() {
 		return username;

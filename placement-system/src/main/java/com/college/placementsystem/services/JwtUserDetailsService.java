@@ -45,6 +45,14 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return authority.getAuthority();
 	}
 	
+	public int determineUserId(String username) throws UsernameNotFoundException {
+		User user = userRepository.findByUsername(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found with username: " + username);
+		}
+		return user.getId();
+	}
+	
 	public User save(LoginRequest loginRequest) {
 		User newUser = new User();
 		newUser.setUsername(loginRequest.getUsername());
@@ -52,7 +60,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		userRepository.save(newUser);
 		Authority newAuthority = new Authority();
 		newAuthority.setUsername(loginRequest.getUsername());
-		newAuthority.setAuthority("ROLE_USER");
+		newAuthority.setAuthority("student");
 		authorityRepository.save(newAuthority);
 		return newUser;
 	}
