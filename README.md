@@ -6,6 +6,31 @@ The TA Placement System is an application that is used by students to apply to b
 ## Git Repo
 This git repo contains the API for the TA Placement System. placement-system contains the front-end code.
 
+## Endpoints
+
+<table>
+  <tr> 
+    <th>Endpoint</th>
+    <th>Purpose</th>
+  </tr>
+  <tr>
+    <td>GET application/{userId}</td>
+    <td>Retrieve the application for the specified user, if it exists</td>
+  </tr>
+  <tr>
+    <td>POST application/{userId}</td>
+    <td>Save the application for the specified user</td>
+  </tr>
+  <tr>
+    <td>GET /applications</td>
+    <td>Retrieve all applications</td>
+  </tr>
+  <tr>
+    <td>GET /courses</td>
+    <td>Retrieve all courses</td>
+  </tr>
+</table>
+
 ## Database
 
 ### User Table 
@@ -114,6 +139,23 @@ The Username is unique.
   </tr>
 </table>
 
+### ProgrammingLanguage Table 
+
+<table>
+  <tr> 
+    <th>Column</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Id</td>
+    <td>Primary Key</td>
+  </tr>
+  <tr>
+    <td>Skill</td>
+    <td>Description of programming language</td>
+  </tr>
+</table>
+
 ### Application Table 
 
 <table>
@@ -152,5 +194,47 @@ The Username is unique.
   <tr>
     <td>Major</td>
     <td>Student's major</td>
+  </tr>
+</table>
+
+### ApplicationCourse Table 
+
+<table>
+  <tr> 
+    <th>Column</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Id</td>
+    <td>Primary Key</td>
+  </tr>
+  <tr>
+    <td>ApplicationId</td>
+    <td>Foreign Key to Id in Application table</td>
+  </tr>
+  <tr>
+    <td>CourseId</td>
+    <td>Foreign Key to Id in Course table</td>
+  </tr>
+</table>
+
+### ApplicationSkill Table 
+
+<table>
+  <tr> 
+    <th>Column</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Id</td>
+    <td>Primary Key</td>
+  </tr>
+  <tr>
+    <td>ApplicationId</td>
+    <td>Foreign Key to Id in Application table</td>
+  </tr>
+  <tr>
+    <td>SkillId</td>
+    <td>Foreign Key to Id in ProgrammingLanguage table</td>
   </tr>
 </table>
