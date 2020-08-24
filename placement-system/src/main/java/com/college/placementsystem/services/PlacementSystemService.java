@@ -15,6 +15,7 @@ import com.college.placementsystem.entities.ProgrammingLanguage;
 import com.college.placementsystem.entities.User;
 import com.college.placementsystem.model.ApplicationModel;
 import com.college.placementsystem.model.CourseModel;
+import com.college.placementsystem.model.SkillModel;
 import com.college.placementsystem.repositories.ApplicationRepository;
 import com.college.placementsystem.repositories.ApplicationCourseRepository;
 import com.college.placementsystem.repositories.ApplicationSkillRepository;
@@ -87,9 +88,9 @@ public class PlacementSystemService {
 			applicationCourseRepository.save(applicationCourse);			
 		}
 		// Create corresponding entries in ApplicationSkill
-		for(String skill: submittedApplication.getSkills()) {
+		for(SkillModel skill: submittedApplication.getSkills()) {
 			ApplicationSkill applicationSkill = new ApplicationSkill();
-			ProgrammingLanguage programmingLanguage = programmingLanguageRepository.findBySkill(skill);
+			ProgrammingLanguage programmingLanguage = programmingLanguageRepository.findBySkill(skill.getDescription());
 			applicationSkill.setApplication(savedApplication);
 			applicationSkill.setSkill(programmingLanguage);
 			applicationSkillRepository.save(applicationSkill);			
@@ -127,10 +128,23 @@ public class PlacementSystemService {
 		return applicationResponses;			
 	}
 	
+	// Get all skills in the database
+	public List<SkillModel> findAllSkills() {
+		List<SkillModel> skillResponses = new ArrayList<SkillModel>();
+		ArrayList<ProgrammingLanguage> programmingLanguages = (ArrayList<ProgrammingLanguage>) programmingLanguageRepository.findAll();
+		for (ProgrammingLanguage programmingLanguage: programmingLanguages) {
+			SkillModel skillResponse = new SkillModel();
+			skillResponse.setSkillId(programmingLanguage.getId());
+			skillResponse.setDescription(programmingLanguage.getSkill());
+			skillResponses.add(skillResponse);
+		}
+		return skillResponses;
+	}
+	
 	// Helper Functions
 	
 	// Map application fields from entity to response
-	public void mapApplicationFields(Application application, ApplicationModel applicationResponse) {
+	public static void mapApplicationFields(Application application, ApplicationModel applicationResponse) {
 		applicationResponse.setName(application.getName());
 		applicationResponse.setEmail(application.getEmail());
 		applicationResponse.setIdNumber(application.getIdNumber());
@@ -157,11 +171,13 @@ public class PlacementSystemService {
 	// Get skills present on application for response
 	public void mapApplicationSkills(Application application, ApplicationModel applicationResponse) {
 		List<ApplicationSkill> applicationSkills = applicationSkillRepository.findByApplication(application);
-		List<String> skills = new ArrayList<String>();
+		List<SkillModel> skills = new ArrayList<SkillModel>();
 		ProgrammingLanguage programmingLanguage;
 		for(ApplicationSkill applicationSkill: applicationSkills) {
 			programmingLanguage = applicationSkill.getSkill();
-			String skill = programmingLanguage.getSkill();
+			SkillModel skill = new SkillModel();
+			skill.setSkillId(programmingLanguage.getId());
+			skill.setDescription(programmingLanguage.getSkill());
 			skills.add(skill);
 		}
 		applicationResponse.setSkills(skills);

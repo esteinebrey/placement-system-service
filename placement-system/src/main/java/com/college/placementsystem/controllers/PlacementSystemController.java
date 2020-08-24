@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.college.placementsystem.model.ApplicationModel;
 import com.college.placementsystem.model.CourseModel;
 import com.college.placementsystem.model.LoginResponse;
+import com.college.placementsystem.model.SkillModel;
 import com.college.placementsystem.services.PlacementSystemService;
 
 @CrossOrigin()
@@ -57,4 +58,9 @@ public class PlacementSystemController {
 		return placementSystemService.findAllCourses();
 	}
 	
+	// Get all skills
+	@GetMapping("/skills")
+	public List<SkillModel> findAllSkills() {
+		return placementSystemService.findAllSkills();
+	}
 }

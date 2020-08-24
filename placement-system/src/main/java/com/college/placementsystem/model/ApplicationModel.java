@@ -10,7 +10,7 @@ public class ApplicationModel {
 	private String graduationDate;
 	private String major;
 	private List<CourseModel> courses;
-	private List<String> skills;
+	private List<SkillModel> skills;
 	
 	public String getName() {
 		return name;
@@ -54,10 +54,10 @@ public class ApplicationModel {
 	public void setCourses(List<CourseModel> courses) {
 		this.courses = courses;
 	}
-	public List<String> getSkills() {
+	public List<SkillModel> getSkills() {
 		return skills;
 	}
-	public void setSkills(List<String> skills) {
+	public void setSkills(List<SkillModel> skills) {
 		this.skills = skills;
 	}
 }

@@ -24,4 +24,8 @@ public class ProgrammingLanguage {
 	public void setSkill(String skill) {
 		this.skill = skill;
 	}
+
+	public int getId() {
+		return id;
+	}
 }
