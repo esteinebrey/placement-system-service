@@ -39,6 +39,12 @@ public class PlacementSystemController {
 		return placementSystemService.findApplication(userId);
 	}
 	
+	// Get the application for a specific user, if they have submitted one
+	@GetMapping("/applications")
+	public List<ApplicationModel> findAllApplications() {
+		return placementSystemService.findAllApplications();
+	}
+	
 	// Post the application for a specific user when they submit it
 	@PostMapping("/application/{userId}")
 	public ApplicationModel submitApplication(@PathVariable int userId, @RequestBody ApplicationModel application) {

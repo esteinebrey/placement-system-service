@@ -52,34 +52,10 @@ public class PlacementSystemService {
 			Application application = optionalApplication.get();
 			ApplicationModel applicationResponse = new ApplicationModel();
 			// Determine the skills specified on the application
-			List<ApplicationSkill> applicationSkills = applicationSkillRepository.findByApplication(application);
-			List<String> skills = new ArrayList<String>();
-			ProgrammingLanguage programmingLanguage;
-			for(ApplicationSkill applicationSkill: applicationSkills) {
-				programmingLanguage = applicationSkill.getSkill();
-				String skill = programmingLanguage.getSkill();
-				skills.add(skill);
-			}
-			applicationResponse.setSkills(skills);
+			mapApplicationSkills(application, applicationResponse);
 			// Determine the courses specified on the application
-			List<ApplicationCourse> applicationCourses = applicationCourseRepository.findByApplication(application);
-			List<CourseModel> courses = new ArrayList<CourseModel>();
-			for (ApplicationCourse applicationCourse: applicationCourses) {
-				CourseModel course = new CourseModel();
-				course.setDeptCode(applicationCourse.getCourse().getDeptCode());
-				course.setName(applicationCourse.getCourse().getCourseName());
-				course.setNumber(applicationCourse.getCourse().getCourseNumber());
-				course.setCourseId(applicationCourse.getCourse().getId());
-				courses.add(course);
-			}
-			// Determine other fields on application
-			applicationResponse.setCourses(courses);
-			applicationResponse.setName(application.getName());
-			applicationResponse.setEmail(application.getEmail());
-			applicationResponse.setIdNumber(application.getIdNumber());
-			applicationResponse.setGpa(application.getGpa());
-			applicationResponse.setGraduationDate(application.getGraduationDate());
-			applicationResponse.setMajor(application.getMajor());
+			mapApplicationCourses(application, applicationResponse);
+			mapApplicationFields(application, applicationResponse);
 			return applicationResponse;
 		}
 		// No application was found
@@ -134,5 +110,60 @@ public class PlacementSystemService {
 			courseResponses.add(courseResponse);
 		}
 		return courseResponses;
+	}
+	
+	// Get all the applications in the database
+	public List<ApplicationModel> findAllApplications() {
+		List<ApplicationModel> applicationResponses = new ArrayList<ApplicationModel>();
+		ArrayList<Application> applications = (ArrayList<Application>) applicationRepository.findAll();
+		for(Application application: applications) {
+			ApplicationModel applicationResponse = new ApplicationModel();
+			// Map fields from database to response
+			mapApplicationFields(application, applicationResponse);
+			mapApplicationCourses(application, applicationResponse);
+			mapApplicationSkills(application, applicationResponse);
+			applicationResponses.add(applicationResponse);
+		}
+		return applicationResponses;			
+	}
+	
+	// Helper Functions
+	
+	// Map application fields from entity to response
+	public void mapApplicationFields(Application application, ApplicationModel applicationResponse) {
+		applicationResponse.setName(application.getName());
+		applicationResponse.setEmail(application.getEmail());
+		applicationResponse.setIdNumber(application.getIdNumber());
+		applicationResponse.setGpa(application.getGpa());
+		applicationResponse.setGraduationDate(application.getGraduationDate());
+		applicationResponse.setMajor(application.getMajor());
+	}
+	
+	// Get courses present on application for response
+	public void mapApplicationCourses(Application application, ApplicationModel applicationResponse) {
+		List<ApplicationCourse> applicationCourses = applicationCourseRepository.findByApplication(application);
+		List<CourseModel> courses = new ArrayList<CourseModel>();
+		for (ApplicationCourse applicationCourse: applicationCourses) {
+			CourseModel course = new CourseModel();
+			course.setDeptCode(applicationCourse.getCourse().getDeptCode());
+			course.setName(applicationCourse.getCourse().getCourseName());
+			course.setNumber(applicationCourse.getCourse().getCourseNumber());
+			course.setCourseId(applicationCourse.getCourse().getId());
+			courses.add(course);
+		}
+		applicationResponse.setCourses(courses);
+	}
+	
+	// Get skills present on application for response
+	public void mapApplicationSkills(Application application, ApplicationModel applicationResponse) {
+		List<ApplicationSkill> applicationSkills = applicationSkillRepository.findByApplication(application);
+		List<String> skills = new ArrayList<String>();
+		ProgrammingLanguage programmingLanguage;
+		for(ApplicationSkill applicationSkill: applicationSkills) {
+			programmingLanguage = applicationSkill.getSkill();
+			String skill = programmingLanguage.getSkill();
+			skills.add(skill);
+		}
+		applicationResponse.setSkills(skills);
 	}
 }
