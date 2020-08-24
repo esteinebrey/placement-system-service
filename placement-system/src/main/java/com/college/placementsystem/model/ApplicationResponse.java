@@ -7,7 +7,6 @@ public class ApplicationResponse {
 	private double gpa;
 	private String graduationDate;
 	private String major;
-	private String[] courseNames;
 	public String getName() {
 		return name;
 	}
@@ -43,11 +42,5 @@ public class ApplicationResponse {
 	}
 	public void setMajor(String major) {
 		this.major = major;
-	}
-	public String[] getCourseNames() {
-		return courseNames;
-	}
-	public void setCourseNames(String[] courseNames) {
-		this.courseNames = courseNames;
 	}
 }
