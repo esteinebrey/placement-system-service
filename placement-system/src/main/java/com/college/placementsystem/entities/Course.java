@@ -22,4 +22,28 @@ public class Course {
 	
 	@Column
 	private String courseName;
+
+	public String getDeptCode() {
+		return deptCode;
+	}
+
+	public void setDeptCode(String deptCode) {
+		this.deptCode = deptCode;
+	}
+
+	public String getCourseNumber() {
+		return courseNumber;
+	}
+
+	public void setCourseNumber(String courseNumber) {
+		this.courseNumber = courseNumber;
+	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
 }
