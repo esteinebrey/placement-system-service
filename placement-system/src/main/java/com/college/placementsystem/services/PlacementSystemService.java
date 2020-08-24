@@ -12,16 +12,21 @@ import com.college.placementsystem.entities.ApplicationCourse;
 import com.college.placementsystem.entities.ApplicationSkill;
 import com.college.placementsystem.entities.Course;
 import com.college.placementsystem.entities.ProgrammingLanguage;
-import com.college.placementsystem.model.ApplicationResponse;
-import com.college.placementsystem.model.CourseResponse;
+import com.college.placementsystem.entities.User;
+import com.college.placementsystem.model.ApplicationModel;
+import com.college.placementsystem.model.CourseModel;
 import com.college.placementsystem.repositories.ApplicationRepository;
 import com.college.placementsystem.repositories.ApplicationCourseRepository;
 import com.college.placementsystem.repositories.ApplicationSkillRepository;
 import com.college.placementsystem.repositories.CourseRepository;
 import com.college.placementsystem.repositories.ProgrammingLanguageRepository;
+import com.college.placementsystem.repositories.UserRepository;
 
 @Service
 public class PlacementSystemService {
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	@Autowired
 	ApplicationRepository applicationRepository;
@@ -35,12 +40,17 @@ public class PlacementSystemService {
 	@Autowired
 	ApplicationSkillRepository applicationSkillRepository;
 	
-	public ApplicationResponse findApplication(int userId) {
-		Optional<Application> optionalApplication = applicationRepository.findById(userId);
+	@Autowired
+	ProgrammingLanguageRepository programmingLanguageRepository;
+	
+	// Get the application with the course and skill info for the user specified, if it exists
+	public ApplicationModel findApplication(int userId) {
+		User user = userRepository.findById(userId);
+		Optional<Application> optionalApplication = applicationRepository.findByUserId(user);
 		// Application was found
 		if (optionalApplication.isPresent()) {
 			Application application = optionalApplication.get();
-			ApplicationResponse applicationResponse = new ApplicationResponse();
+			ApplicationModel applicationResponse = new ApplicationModel();
 			// Determine the skills specified on the application
 			List<ApplicationSkill> applicationSkills = applicationSkillRepository.findByApplication(application);
 			List<String> skills = new ArrayList<String>();
@@ -53,12 +63,13 @@ public class PlacementSystemService {
 			applicationResponse.setSkills(skills);
 			// Determine the courses specified on the application
 			List<ApplicationCourse> applicationCourses = applicationCourseRepository.findByApplication(application);
-			List<CourseResponse> courses = new ArrayList<CourseResponse>();
+			List<CourseModel> courses = new ArrayList<CourseModel>();
 			for (ApplicationCourse applicationCourse: applicationCourses) {
-				CourseResponse course = new CourseResponse();
+				CourseModel course = new CourseModel();
 				course.setDeptCode(applicationCourse.getCourse().getDeptCode());
 				course.setName(applicationCourse.getCourse().getCourseName());
 				course.setNumber(applicationCourse.getCourse().getCourseNumber());
+				course.setCourseId(applicationCourse.getCourse().getId());
 				courses.add(course);
 			}
 			// Determine other fields on application
@@ -77,14 +88,49 @@ public class PlacementSystemService {
 		}
 	}
 	
-	public List<CourseResponse> findAllCourses() {
+	// Save submitted application
+	public ApplicationModel submitApplication(int userId, ApplicationModel submittedApplication) {
+		Application application = new Application();
+		application.setName(submittedApplication.getName());
+		application.setEmail(submittedApplication.getEmail());
+		application.setIdNumber(submittedApplication.getIdNumber());
+		application.setGpa(submittedApplication.getGpa());
+		application.setMajor(submittedApplication.getMajor());
+		application.setGraduationDate(submittedApplication.getGraduationDate());
+		// Find the user for the application
+		User user = userRepository.findById(userId);
+		application.setUser(user);
+		// Save and get saved application to add entries in ApplicationCourse and ApplicationSkill
+		Application savedApplication = applicationRepository.save(application);
+		// Create corresponding entries in ApplicationCourse
+		for(CourseModel courseModel: submittedApplication.getCourses()) {
+			ApplicationCourse applicationCourse = new ApplicationCourse();
+			Course course = courseRepository.findById(courseModel.getCourseId());
+			applicationCourse.setApplication(savedApplication);
+			applicationCourse.setCourse(course);
+			applicationCourseRepository.save(applicationCourse);			
+		}
+		// Create corresponding entries in ApplicationSkill
+		for(String skill: submittedApplication.getSkills()) {
+			ApplicationSkill applicationSkill = new ApplicationSkill();
+			ProgrammingLanguage programmingLanguage = programmingLanguageRepository.findBySkill(skill);
+			applicationSkill.setApplication(savedApplication);
+			applicationSkill.setSkill(programmingLanguage);
+			applicationSkillRepository.save(applicationSkill);			
+		}
+		return submittedApplication;		
+	}
+	
+	// Get all the courses in the database
+	public List<CourseModel> findAllCourses() {
 		List<Course> courses = courseRepository.findAll();
-		List<CourseResponse> courseResponses = new ArrayList<CourseResponse>();
-		CourseResponse courseResponse = new CourseResponse();
+		List<CourseModel> courseResponses = new ArrayList<CourseModel>();
+		CourseModel courseResponse = new CourseModel();
 		for (Course course : courses) {
 			courseResponse.setDeptCode(course.getDeptCode());
 			courseResponse.setName(course.getCourseName());
 			courseResponse.setNumber(course.getCourseNumber());
+			courseResponse.setCourseId(course.getId());
 			courseResponses.add(courseResponse);
 		}
 		return courseResponses;

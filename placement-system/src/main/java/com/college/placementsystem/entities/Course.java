@@ -46,4 +46,8 @@ public class Course {
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
 	}
+
+	public int getId() {
+		return id;
+	}
 }

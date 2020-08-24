@@ -2,14 +2,14 @@ package com.college.placementsystem.model;
 
 import java.util.List;
 
-public class ApplicationResponse {
+public class ApplicationModel {
     private String name;
 	private String email;
 	private int idNumber;
 	private double gpa;
 	private String graduationDate;
 	private String major;
-	private List<CourseResponse> courses;
+	private List<CourseModel> courses;
 	private List<String> skills;
 	
 	public String getName() {
@@ -48,10 +48,10 @@ public class ApplicationResponse {
 	public void setMajor(String major) {
 		this.major = major;
 	}
-	public List<CourseResponse> getCourses() {
+	public List<CourseModel> getCourses() {
 		return courses;
 	}
-	public void setCourses(List<CourseResponse> courses) {
+	public void setCourses(List<CourseModel> courses) {
 		this.courses = courses;
 	}
 	public List<String> getSkills() {

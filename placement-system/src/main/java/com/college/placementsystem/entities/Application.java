@@ -93,4 +93,8 @@ public class Application {
 	public void setMajor(String major) {
 		this.major = major;
 	}
+
+	public int getId() {
+		return id;
+	}
 }

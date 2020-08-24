@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import com.college.placementsystem.entities.ProgrammingLanguage;
 
 public interface ProgrammingLanguageRepository extends CrudRepository<ProgrammingLanguage, Integer> {
-	ProgrammingLanguage findById(int id);
+	ProgrammingLanguage findBySkill(String skill);
 }
