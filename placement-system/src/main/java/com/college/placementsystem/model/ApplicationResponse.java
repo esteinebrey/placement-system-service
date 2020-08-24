@@ -1,5 +1,7 @@
 package com.college.placementsystem.model;
 
+import java.util.List;
+
 public class ApplicationResponse {
     private String name;
 	private String email;
@@ -7,6 +9,9 @@ public class ApplicationResponse {
 	private double gpa;
 	private String graduationDate;
 	private String major;
+	private List<CourseResponse> courses;
+	private List<String> skills;
+	
 	public String getName() {
 		return name;
 	}
@@ -42,5 +47,17 @@ public class ApplicationResponse {
 	}
 	public void setMajor(String major) {
 		this.major = major;
+	}
+	public List<CourseResponse> getCourses() {
+		return courses;
+	}
+	public void setCourses(List<CourseResponse> courses) {
+		this.courses = courses;
+	}
+	public List<String> getSkills() {
+		return skills;
+	}
+	public void setSkills(List<String> skills) {
+		this.skills = skills;
 	}
 }

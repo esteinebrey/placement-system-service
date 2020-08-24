@@ -8,4 +8,6 @@ import com.college.placementsystem.entities.Course;
 
 public interface CourseRepository extends CrudRepository<Course, Integer> {
 	List<Course> findAll();
+	
+	Course findById(int id);
 }
