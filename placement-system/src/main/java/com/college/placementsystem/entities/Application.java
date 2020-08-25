@@ -1,11 +1,15 @@
 package com.college.placementsystem.entities;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -37,6 +41,28 @@ public class Application {
 	
 	@Column
 	private String major;
+	
+	@ManyToMany 
+	@JoinTable(
+		name = "ApplicationCourse",
+		joinColumns = @JoinColumn(name = "applicationId"),
+		inverseJoinColumns = @JoinColumn(name = "courseId"))
+	List<Course> takenCourses;
+	
+	@ManyToMany 
+	@JoinTable(
+		name = "ApplicationSkill",
+		joinColumns = @JoinColumn(name = "applicationId"),
+		inverseJoinColumns = @JoinColumn(name = "skillId"))
+	List<ProgrammingLanguage> currentSkills;
+	
+	public List<ProgrammingLanguage> getCurrentSkills() {
+		return currentSkills;
+	}
+
+	public void setCurrentSkills(List<ProgrammingLanguage> currentSkills) {
+		this.currentSkills = currentSkills;
+	}
 
 	public User getUser() {
 		return user;
@@ -92,6 +118,14 @@ public class Application {
 
 	public void setMajor(String major) {
 		this.major = major;
+	}
+
+	public List<Course> getTakenCourses() {
+		return takenCourses;
+	}
+
+	public void setTakenCourses(List<Course> takenCourses) {
+		this.takenCourses = takenCourses;
 	}
 
 	public int getId() {

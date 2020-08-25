@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.college.placementsystem.entities.Application;
-import com.college.placementsystem.entities.ApplicationCourse;
-import com.college.placementsystem.entities.ApplicationSkill;
 import com.college.placementsystem.entities.Course;
 import com.college.placementsystem.entities.ProgrammingLanguage;
 import com.college.placementsystem.entities.User;
@@ -17,8 +15,6 @@ import com.college.placementsystem.model.ApplicationModel;
 import com.college.placementsystem.model.CourseModel;
 import com.college.placementsystem.model.SkillModel;
 import com.college.placementsystem.repositories.ApplicationRepository;
-import com.college.placementsystem.repositories.ApplicationCourseRepository;
-import com.college.placementsystem.repositories.ApplicationSkillRepository;
 import com.college.placementsystem.repositories.CourseRepository;
 import com.college.placementsystem.repositories.ProgrammingLanguageRepository;
 import com.college.placementsystem.repositories.UserRepository;
@@ -34,12 +30,6 @@ public class PlacementSystemService {
 	
 	@Autowired
 	CourseRepository courseRepository;
-	
-	@Autowired
-	ApplicationCourseRepository applicationCourseRepository;
-	
-	@Autowired
-	ApplicationSkillRepository applicationSkillRepository;
 	
 	@Autowired
 	ProgrammingLanguageRepository programmingLanguageRepository;
@@ -79,22 +69,20 @@ public class PlacementSystemService {
 		application.setUser(user);
 		// Save and get saved application to add entries in ApplicationCourse and ApplicationSkill
 		Application savedApplication = applicationRepository.save(application);
-		// Create corresponding entries in ApplicationCourse
+//		// Create corresponding entries in ApplicationCourse
+		List<Course> correspondingCourses = new ArrayList<Course>();
 		for(CourseModel courseModel: submittedApplication.getCourses()) {
-			ApplicationCourse applicationCourse = new ApplicationCourse();
 			Course course = courseRepository.findById(courseModel.getCourseId());
-			applicationCourse.setApplication(savedApplication);
-			applicationCourse.setCourse(course);
-			applicationCourseRepository.save(applicationCourse);			
+			correspondingCourses.add(course);		
 		}
-		// Create corresponding entries in ApplicationSkill
+		savedApplication.setTakenCourses(correspondingCourses);
+//		// Create corresponding entries in ApplicationSkill
+		List<ProgrammingLanguage> correspondingSkills = new ArrayList<ProgrammingLanguage>();
 		for(SkillModel skill: submittedApplication.getSkills()) {
-			ApplicationSkill applicationSkill = new ApplicationSkill();
 			ProgrammingLanguage programmingLanguage = programmingLanguageRepository.findBySkill(skill.getDescription());
-			applicationSkill.setApplication(savedApplication);
-			applicationSkill.setSkill(programmingLanguage);
-			applicationSkillRepository.save(applicationSkill);			
+			correspondingSkills.add(programmingLanguage);		
 		}
+		savedApplication.setCurrentSkills(correspondingSkills);
 		return submittedApplication;		
 	}
 	
@@ -102,8 +90,8 @@ public class PlacementSystemService {
 	public List<CourseModel> findAllCourses() {
 		List<Course> courses = courseRepository.findAll();
 		List<CourseModel> courseResponses = new ArrayList<CourseModel>();
-		CourseModel courseResponse = new CourseModel();
 		for (Course course : courses) {
+			CourseModel courseResponse = new CourseModel();
 			courseResponse.setDeptCode(course.getDeptCode());
 			courseResponse.setName(course.getCourseName());
 			courseResponse.setNumber(course.getCourseNumber());
@@ -155,14 +143,14 @@ public class PlacementSystemService {
 	
 	// Get courses present on application for response
 	public void mapApplicationCourses(Application application, ApplicationModel applicationResponse) {
-		List<ApplicationCourse> applicationCourses = applicationCourseRepository.findByApplication(application);
+		List<Course> applicationCourses = application.getTakenCourses();
 		List<CourseModel> courses = new ArrayList<CourseModel>();
-		for (ApplicationCourse applicationCourse: applicationCourses) {
+		for (Course applicationCourse: applicationCourses) {
 			CourseModel course = new CourseModel();
-			course.setDeptCode(applicationCourse.getCourse().getDeptCode());
-			course.setName(applicationCourse.getCourse().getCourseName());
-			course.setNumber(applicationCourse.getCourse().getCourseNumber());
-			course.setCourseId(applicationCourse.getCourse().getId());
+			course.setDeptCode(applicationCourse.getDeptCode());
+			course.setName(applicationCourse.getCourseName());
+			course.setNumber(applicationCourse.getCourseNumber());
+			course.setCourseId(applicationCourse.getId());
 			courses.add(course);
 		}
 		applicationResponse.setCourses(courses);
@@ -170,14 +158,12 @@ public class PlacementSystemService {
 	
 	// Get skills present on application for response
 	public void mapApplicationSkills(Application application, ApplicationModel applicationResponse) {
-		List<ApplicationSkill> applicationSkills = applicationSkillRepository.findByApplication(application);
+		List<ProgrammingLanguage> applicationSkills = application.getCurrentSkills();
 		List<SkillModel> skills = new ArrayList<SkillModel>();
-		ProgrammingLanguage programmingLanguage;
-		for(ApplicationSkill applicationSkill: applicationSkills) {
-			programmingLanguage = applicationSkill.getSkill();
+		for(ProgrammingLanguage applicationSkill: applicationSkills) {
 			SkillModel skill = new SkillModel();
-			skill.setSkillId(programmingLanguage.getId());
-			skill.setDescription(programmingLanguage.getSkill());
+			skill.setSkillId(applicationSkill.getId());
+			skill.setDescription(applicationSkill.getSkill());
 			skills.add(skill);
 		}
 		applicationResponse.setSkills(skills);
